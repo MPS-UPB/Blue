@@ -19,22 +19,11 @@ import org.eclipse.swt.widgets.List;
 
 public class Actions {
 
-	List execList;
-	Canvas originalCanvas;
-	Canvas preprocessedCanvas;
-
-	public Actions(Canvas originalImageCanv, Canvas preprocessedImageCanv,
-			List executablesList) {
-		originalCanvas = originalImageCanv;
-		preprocessedCanvas = preprocessedImageCanv;
-		execList = executablesList;
-	}
-
 	/**
 	 * Face refresh pe lista de executabile, cautand in workspace 2 fisiere cu
 	 * extensiile exe si xsd si acelasi nume.
 	 */
-	public void refresh() {
+	public static void refresh(List execList) {
 		execList.removeAll();
 		File folder = new File(MainClass.getWorkspacePath());
 		File[] listOfFiles = folder.listFiles();
@@ -59,17 +48,18 @@ public class Actions {
 	}
 
 	/** Aplica transformarile selectate. */
-	public void apply() {
-		preprocessedCanvas.addPaintListener(new PaintListener() {
+	public static void apply(final Canvas originalImageCanv,
+			final Canvas preprocessedImageCanv, List execList) {
+		preprocessedImageCanv.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
-				GC gc = new GC(originalCanvas);
-				int x = originalCanvas.getSize().x;
-				int y = originalCanvas.getSize().y;
-				Image image = new Image(originalCanvas.getDisplay(), x, y);
-				preprocessedCanvas.setSize(x, y);
+				GC gc = new GC(originalImageCanv);
+				int x = originalImageCanv.getSize().x;
+				int y = originalImageCanv.getSize().y;
+				Image image = new Image(originalImageCanv.getDisplay(), x, y);
+				preprocessedImageCanv.setSize(x, y);
 				gc.copyArea(image, 0, 0);
-				Image copy = new Image(preprocessedCanvas.getDisplay(), image,
-						SWT.IMAGE_COPY);
+				Image copy = new Image(preprocessedImageCanv.getDisplay(),
+						image, SWT.IMAGE_COPY);
 
 				e.gc.drawImage(copy, 0, 0);
 				gc.dispose();
@@ -77,7 +67,7 @@ public class Actions {
 				copy.dispose();
 			}
 		});
-		preprocessedCanvas.redraw();
+		preprocessedImageCanv.redraw();
 
 		for (int i = 0; i < execList.getSelection().length; i++) {
 			if (execList.getSelection()[i].equals("rotate")) {

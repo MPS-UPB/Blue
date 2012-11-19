@@ -218,6 +218,7 @@ public class MainWindow {
 		executablesList = new List(executables, SWT.BORDER | SWT.H_SCROLL
 				| SWT.V_SCROLL | SWT.MULTI);
 		executablesList.setItems(new String[] {});
+		Actions.refresh(executablesList);
 
 		Menu menu_executables = new Menu(executablesList);
 		executablesList.setMenu(menu_executables);
@@ -226,9 +227,7 @@ public class MainWindow {
 		mntmRefresh.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				Actions actions = new Actions(originalImageCanv,
-						preprocessedImageCanv, executablesList);
-				actions.refresh();
+				Actions.refresh(executablesList);
 			}
 		});
 
@@ -242,9 +241,8 @@ public class MainWindow {
 		btnApply.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				Actions actions = new Actions(originalImageCanv,
-						preprocessedImageCanv, executablesList);
-				actions.apply();
+				Actions.apply(originalImageCanv, preprocessedImageCanv,
+						executablesList);
 			}
 		});
 		FormData fd_btnApply = new FormData();

@@ -79,5 +79,12 @@ public class Actions {
 		});
 		preprocessedCanvas.redraw();
 
+		for (int i = 0; i < execList.getSelection().length; i++) {
+			if (execList.getSelection()[i].equals("rotate")) {
+				Rotate rotate = new Rotate();
+				rotate.createRotateWindow("Test");
+			}
+		}
+
 	}
 }

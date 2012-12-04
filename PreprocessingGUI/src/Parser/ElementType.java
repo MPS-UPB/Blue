@@ -1,5 +1,6 @@
 package Parser;
 
+
 public class ElementType {
 
 	private String elementName;

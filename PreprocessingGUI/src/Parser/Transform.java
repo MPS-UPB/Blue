@@ -1,5 +1,7 @@
 package Parser;
 
+
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +16,8 @@ public class Transform {
 	public String execDescription = "";
 	public String execName = "";
 
+	Transform(){}
+	
 	Transform(ArrayList<SimpleType> simpleTypeList,
 			ArrayList<ComplexType> complexTypeList,
 			ArrayList<ElementType> elementsList) {
@@ -73,6 +77,15 @@ public class Transform {
 		for (Map.Entry<String, String> entry : parameters.entrySet())
 			System.out.println("Parametru = " + entry.getKey() + ", Tip = "
 					+ entry.getValue());
+	}
+	
+	public String getValue(String key){
+		
+		for (Map.Entry<String, String> entry : parameters.entrySet()){
+			if(entry.getKey().equals(key))
+				return entry.getValue();
+		}
+		return null;
 	}
 	
 	public void printExecInfo() {

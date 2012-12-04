@@ -1,5 +1,6 @@
 package Parser;
 
+
 public class SimpleType {
 
 	private String typeName;

@@ -1,4 +1,5 @@
 package Parser;
+
 import com.sun.xml.xsom.impl.parser.DelayedRef;
 import com.sun.xml.xsom.parser.XSOMParser;
 import com.sun.xml.xsom.XSAttributeDecl;
@@ -23,17 +24,20 @@ import java.lang.reflect.Field;
 
 public class Parser {
 
+	
+	SimpleType simpleType;
+	ComplexType complexType;
+	String namespace = null;
+	XSSimpleType  simple = null;
+	XSComplexType complex = null;
+	static ElementGroup elementGroup = new ElementGroup();
+	ArrayList<SimpleType> simpleTypeList = new ArrayList<SimpleType>();
+	ArrayList<ComplexType> complexTypeList = new ArrayList<ComplexType>();
+	
 	public void parseSchema()
 	{  
-		File file = new File("D:\\anul IV (2012 - 2013)\\sem I\\MPS\\Proiect\\ProjMps\\otsu.xsd");
-
-		SimpleType simpleType;
-		ComplexType complexType;
-		XSSimpleType  simple = null;
-		XSComplexType complex = null;
-		ArrayList<SimpleType> simpleTypeList = new ArrayList<SimpleType>();
-		ArrayList<ComplexType> complexTypeList = new ArrayList<ComplexType>();
-
+		File file = new File("C:\\Users\\andreea\\Downloads\\otsu.xsd");
+		
 		try {
 			XSOMParser parser = new XSOMParser();
 			parser.parse(file);
@@ -43,6 +47,7 @@ public class Parser {
 			XSSchema s = (XSSchema)sset.iterateSchema().next();
 			XSSchema globalSchema = sset.getSchema("");
 
+			namespace = s.getTargetNamespace();
 			System.out.println("Target namespace: "+s.getTargetNamespace());
 
 			//---------------------------------------------------------------------------------------Complex Type stuff			
@@ -81,7 +86,6 @@ public class Parser {
 			//---------------------------------------------------------------------------------------------- get Elements and what is inside
 
 			XSElementDecl ed = globalSchema.getElementDecls().values().toArray(new XSElementDecl[1])[0];
-			ElementGroup elementGroup = new ElementGroup();
 			ArrayList<ElementType> elementsList = new ArrayList<ElementType>();
 			elementGroup.setGlobalName(ed.getName());
 			XSContentType xsContentType = ed.getType().asComplexType().getContentType();
@@ -127,9 +131,10 @@ public class Parser {
 					System.out.println(elementsList.get(i).getParentElementName() + " -- " +elementsList.get(i).getElementName() + " -- " +elementsList.get(i).getElementType());
 			}
 			
-			Transform trans = new Transform(simpleTypeList, complexTypeList, elementsList);
+			Transform trans = new Transform(simpleTypeList, complexTypeList, elementGroup.getElementsList());
 			System.out.println("\n************************************************\n");
 			trans.createWindow();
+			
 		}
 		catch (Exception exp) {
 			exp.printStackTrace(System.out);
@@ -218,4 +223,3 @@ public class Parser {
 		rr.parseSchema();
 	}
 }
-

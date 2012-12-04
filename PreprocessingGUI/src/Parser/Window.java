@@ -1,5 +1,7 @@
 package Parser;
 
+
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -8,6 +10,7 @@ import java.util.Map;
 
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.xml.transform.TransformerException;
 
 	
 class Window extends JFrame implements ActionListener{
@@ -32,6 +35,8 @@ class Window extends JFrame implements ActionListener{
 	public static ArrayList<JTextField> textFilds = new ArrayList<JTextField>();
 	public static ArrayList<String> nameFilds = new ArrayList<String>();
 
+	public Window(){}
+	
 	@SuppressWarnings("static-access")
 	public Window(String execName, String execDescription,  
 			Map<String, String> parameters){
@@ -61,6 +66,15 @@ class Window extends JFrame implements ActionListener{
 					+ entry.getValue());
 	}
 	
+	public String getParamValue(String key){
+		
+		for (Map.Entry<String, String> entry : parametersValue.entrySet()){
+			if(entry.getKey().equals(key))
+				return entry.getValue();
+		}
+		return null;
+	}
+	
 	public void actionPerformed (ActionEvent e) {
 
 		if (e.getSource() == continueButton){
@@ -73,6 +87,13 @@ class Window extends JFrame implements ActionListener{
 				parametersValue.put(nameFilds.get(i), textFilds.get(i).getText());
 			
 			printParametersValue();
+			XMLCreate x = new XMLCreate();
+			try {
+				x.xmlCreate(parametersValue);
+			} catch (TransformerException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			System.exit(0);
 		}
 	}

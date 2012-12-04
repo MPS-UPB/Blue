@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 public class ElementGroup {
 
-	public String globalElementName;
-	public ArrayList<ElementType> elementsList = new ArrayList<ElementType>();
+	private String globalElementName;
+	private ArrayList<ElementType> elementsList = new ArrayList<ElementType>();
 
 
 	public void setElementsList(ArrayList<ElementType> list) {

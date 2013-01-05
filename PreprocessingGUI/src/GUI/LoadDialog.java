@@ -28,7 +28,6 @@ public class LoadDialog extends AbstractFileDialog {
 
 	@Override
 	public void apply() {
-		System.out.println("ceva");
 		canv.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				ImageData imgData = new ImageData(fileName);
@@ -53,5 +52,9 @@ public class LoadDialog extends AbstractFileDialog {
 			}
 		});
 		canv.redraw();
+	}
+
+	public String getPath() {
+		return fileName;
 	}
 }

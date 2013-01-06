@@ -58,7 +58,7 @@ public class XMLCreate {
 					MainClass.getParametersPath()));
 
 			// daca vrei sa afisezi la consola:
-			result = new StreamResult(System.out);
+			// StreamResult result = new StreamResult(System.out);
 			transformer.transform(source, result);
 
 		} catch (ParserConfigurationException pce) {

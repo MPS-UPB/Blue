@@ -67,6 +67,11 @@ public class CompareWindow {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				// TODO
+				ImagePlus imp1 = IJ.openImage(getImage1Path());
+				ImagePlus imp2 = IJ.openImage(getImage2Path());
+				ImageCalculator ic =  new ImageCalculator();
+				ImagePlus imp3 = ic.run("Substract create", imp1, imp2);
+				imp3.show();
 			}
 		});
 		btnCompare.setText("Compare");
@@ -130,7 +135,7 @@ public class CompareWindow {
 				LoadDialog dialog = new LoadDialog(shell);
 				dialog.open();
 				pathImage2 = dialog.getPath();
-				ImageLoader.loadImageInCanvas(pathImage1, canvasImage2);
+				ImageLoader.loadImageInCanvas(pathImage2, canvasImage2);
 			}
 		});
 		FormData fd_btnLoadImage2 = new FormData();

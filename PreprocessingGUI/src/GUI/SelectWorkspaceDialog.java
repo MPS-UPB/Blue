@@ -10,6 +10,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Shell;
 
+import Main.MainClass;
+
 public class SelectWorkspaceDialog {
 
 	DirectoryDialog dialog;

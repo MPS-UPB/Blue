@@ -6,5 +6,8 @@
 	<classpathentry kind="lib" path="lib/org.eclipse.swt.win32.win32.x86_3.100.1.v4234e.jar"/>
 	<classpathentry kind="lib" path="lib/swing2swt.jar"/>
 	<classpathentry kind="lib" path="lib/swt-grouplayout.jar"/>
+	<classpathentry kind="lib" path="lib/xsom.jar"/>
+	<classpathentry kind="lib" path="lib/relaxngDatatype.jar"/>
+	<classpathentry kind="lib" path="lib/ij.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

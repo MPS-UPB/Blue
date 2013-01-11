@@ -16,6 +16,8 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
+import Main.MainClass;
+
 public class ImportDialog extends AbstractFileDialog {
 
 	String path;
@@ -26,7 +28,11 @@ public class ImportDialog extends AbstractFileDialog {
 		dialog = new FileDialog(shell, SWT.OPEN | SWT.MULTI);
 		dialog.setText(title);
 		dialog.setFilterExtensions(new String[] { filter });
-		path = MainClass.getWorkspacePath();
+		if (filter.equals(".xsd")) {
+			path = MainClass.getXMLSchemasPath();
+		} else {
+			path = MainClass.getWorkspacePath();
+		}
 	}
 
 	@Override

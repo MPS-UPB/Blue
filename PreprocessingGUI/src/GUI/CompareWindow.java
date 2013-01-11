@@ -27,6 +27,8 @@ public class CompareWindow {
 	protected Shell shell;
 	private Canvas canvasImage1;
 	private Canvas canvasImage2;
+	private String pathImage1 = "";
+	private String pathImage2 = "";
 
 	/**
 	 * Open the window.
@@ -65,6 +67,11 @@ public class CompareWindow {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				// TODO
+				ImagePlus imp1 = IJ.openImage(getImage1Path());
+				ImagePlus imp2 = IJ.openImage(getImage2Path());
+				ImageCalculator ic =  new ImageCalculator();
+				ImagePlus imp3 = ic.run("Substract create", imp1, imp2);
+				imp3.show();
 			}
 		});
 		btnCompare.setText("Compare");
@@ -98,8 +105,10 @@ public class CompareWindow {
 		btnLoadImage1.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				LoadDialog dialog = new LoadDialog(shell, canvasImage1);
+				LoadDialog dialog = new LoadDialog(shell);
 				dialog.open();
+				pathImage1 = dialog.getPath();
+				ImageLoader.loadImageInCanvas(pathImage1, canvasImage1);
 			}
 		});
 		FormData fd_btnLoadImage1 = new FormData();
@@ -123,8 +132,10 @@ public class CompareWindow {
 		btnLoadImage2.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				LoadDialog dialog = new LoadDialog(shell, canvasImage2);
+				LoadDialog dialog = new LoadDialog(shell);
 				dialog.open();
+				pathImage2 = dialog.getPath();
+				ImageLoader.loadImageInCanvas(pathImage2, canvasImage2);
 			}
 		});
 		FormData fd_btnLoadImage2 = new FormData();
@@ -138,6 +149,13 @@ public class CompareWindow {
 		canvasImage2 = new Canvas(composite_2, SWT.NONE);
 		canvasImage2.setLayoutData(BorderLayout.CENTER);
 		sashForm.setWeights(new int[] { 1, 1 });
+	}
 
+	public String getImage1Path() {
+		return pathImage1;
+	}
+
+	public String getImage2Path() {
+		return pathImage2;
 	}
 }

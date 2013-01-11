@@ -8,14 +8,17 @@ package GUI;
  */
 
 import java.io.File;
+import java.io.IOException;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
+import javax.xml.transform.TransformerException;
+
+import org.apache.commons.io.FileUtils;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.List;
+
+import Main.MainClass;
+import Parser.Parser;
+import Parser.XMLCreate;
 
 public class Actions {
 
@@ -25,16 +28,20 @@ public class Actions {
 	 */
 	public static void refresh(List execList) {
 		execList.removeAll();
-		File folder = new File(MainClass.getWorkspacePath());
-		File[] listOfFiles = folder.listFiles();
-
-		for (int i = 0; i < listOfFiles.length; i++) {
-			File f = listOfFiles[i];
+		File folder_exe = new File(MainClass.getWorkspacePath());
+		File folder_xsd = new File(MainClass.getXMLSchemasPath());
+		File[] listOfFiles_exe = folder_exe.listFiles();
+		File[] listOfFiles_xsd = folder_xsd.listFiles();
+		if (listOfFiles_exe == null || listOfFiles_xsd == null) {
+			return;
+		}
+		for (int i = 0; i < listOfFiles_exe.length; i++) {
+			File f = listOfFiles_exe[i];
 			String fName = f.getName();
 			if (fName.endsWith(".exe")) {
 				String execName = fName.substring(0, fName.length() - 4);
-				for (int j = 0; j < listOfFiles.length; j++) {
-					File g = listOfFiles[j];
+				for (int j = 0; j < listOfFiles_xsd.length; j++) {
+					File g = listOfFiles_xsd[j];
 					String gName = g.getName();
 					if (gName.endsWith(".xsd")
 							&& execName.equals(gName.substring(0,
@@ -50,29 +57,76 @@ public class Actions {
 	/** Aplica transformarile selectate. */
 	public static void apply(final Canvas originalImageCanv,
 			final Canvas preprocessedImageCanv, List execList) {
-		preprocessedImageCanv.addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e) {
-				GC gc = new GC(originalImageCanv);
-				int x = originalImageCanv.getSize().x;
-				int y = originalImageCanv.getSize().y;
-				Image image = new Image(originalImageCanv.getDisplay(), x, y);
-				preprocessedImageCanv.setSize(x, y);
-				gc.copyArea(image, 0, 0);
-				Image copy = new Image(preprocessedImageCanv.getDisplay(),
-						image, SWT.IMAGE_COPY);
 
-				e.gc.drawImage(copy, 0, 0);
-				gc.dispose();
-				image.dispose();
-				copy.dispose();
-			}
-		});
-		preprocessedImageCanv.redraw();
+		String inputFile = MainClass.getIntermediateImagePath();
+		String outputFile = MainClass.getIntermediateImagePath();
+		boolean canceled = false;
 
 		for (int i = 0; i < execList.getSelection().length; i++) {
-			if (execList.getSelection()[i].equals("rotate")) {
-				Rotate rotate = new Rotate();
-				rotate.createRotateWindow("Test");
+			String executablePath = MainClass.getWorkspacePath()
+					+ execList.getSelection()[i] + ".exe";
+			Parser parser = new Parser(new File(MainClass.getXMLSchemasPath()
+					+ execList.getSelection()[i] + ".xsd"));
+			parser.parseSchema();
+			Transform transform = new Transform(parser.simpleTypeList,
+					parser.complexTypeList,
+					parser.elementGroup.getElementsList(), inputFile,
+					outputFile);
+			Window window = transform.createWindow();
+			window.drawWindow();
+			window.setVisible(true);
+
+			while (window.isVisible()) {
+				try {
+					Thread.sleep(10);
+				} catch (Exception ex) {
+				}
+			}
+
+			if (window.process == -1) {
+				canceled = true;
+				break; // a fost apasat x (close)
+			}
+
+			if (window.process == 1) { // a fost apasat Process
+				XMLCreate x = new XMLCreate();
+				try {
+					x.xmlCreate(window.getParametersValue(), parser);
+				} catch (TransformerException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+			String cmd = executablePath + " " + MainClass.getParametersPath();
+
+			try {
+				Runtime.getRuntime()
+						.exec(cmd, null, new File(MainClass.getWorkspacePath()))
+						.waitFor();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		if (!canceled) {
+			try {
+				FileUtils.copyFile(
+						new File(MainClass.getIntermediateImagePath()),
+						new File(MainClass.getProcessedImagePath()));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			ImageLoader.loadImageInCanvas(MainClass.getProcessedImagePath(),
+					preprocessedImageCanv);
+		} else {
+			try {
+				FileUtils.copyFile(new File(MainClass.getProcessedImagePath()),
+						new File(MainClass.getIntermediateImagePath()));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 

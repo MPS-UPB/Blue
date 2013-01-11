@@ -8,6 +8,10 @@ package GUI;
  *  @version 1.1, 18 Nov 2012
  */
 
+import java.io.File;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -26,6 +30,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 import swing2swt.layout.BorderLayout;
+import Main.MainClass;
 
 public class MainWindow {
 
@@ -71,8 +76,20 @@ public class MainWindow {
 		mntmLoadImage.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				LoadDialog dialog = new LoadDialog(shell, originalImageCanv);
+				LoadDialog dialog = new LoadDialog(shell);
 				dialog.open();
+				String path = dialog.getPath();
+				ImageLoader.loadImageInCanvas(path, originalImageCanv);
+				ImageLoader.loadImageInCanvas(path, preprocessedImageCanv);
+				try {
+					FileUtils.copyFile(new File(path),
+							new File(MainClass.getIntermediateImagePath()));
+					FileUtils.copyFile(new File(path),
+							new File(MainClass.getProcessedImagePath()));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 		mntmLoadImage.setText("Load Image");
@@ -81,11 +98,36 @@ public class MainWindow {
 		mntmSaveImage.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				SaveDialog dialog = new SaveDialog(shell, preprocessedImageCanv);
+				SaveDialog dialog = new SaveDialog(shell, MainClass
+						.getProcessedImagePath());
 				dialog.open();
 			}
 		});
 		mntmSaveImage.setText("Save Image");
+
+		MenuItem mntmCopyKnownExecutables = new MenuItem(menuBar, SWT.NONE);
+		mntmCopyKnownExecutables.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				MessageBox dlog = new MessageBox(shell, SWT.ICON_WARNING
+						| SWT.YES | SWT.NO);
+				dlog.setText("Same named files will be overwritten");
+				dlog.setMessage("Same named files will be overwritten. Do you want to continue?");
+				int status = dlog.open();
+				if (status == SWT.YES) {
+
+					try {
+						FileUtils.copyDirectory(new File("execs"), new File(
+								MainClass.getWorkspacePath()));
+						Actions.refresh(executablesList);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		mntmCopyKnownExecutables.setText("Add Default Executables");
 
 		MenuItem mntmImportExecutables = new MenuItem(menuBar, SWT.CASCADE);
 		mntmImportExecutables.setText("Import Executables");
@@ -100,6 +142,7 @@ public class MainWindow {
 				ImportDialog dialog = new ImportDialog(shell, "Select XSD",
 						"*.xsd");
 				dialog.open();
+				Actions.refresh(executablesList);
 			}
 		});
 		mntmImportXsd.setText("Import XSD");
@@ -111,6 +154,7 @@ public class MainWindow {
 				ImportDialog dialog = new ImportDialog(shell, "Select EXE",
 						"*.exe");
 				dialog.open();
+				Actions.refresh(executablesList);
 			}
 		});
 		mntmImportExe.setText("Import EXE");
@@ -121,6 +165,7 @@ public class MainWindow {
 			public void widgetSelected(SelectionEvent arg0) {
 				SelectWorkspaceDialog dialog = new SelectWorkspaceDialog(shell);
 				dialog.apply();
+				Actions.refresh(executablesList);
 			}
 		});
 		mntmSelectWorkspace.setText("Select Workspace");
@@ -195,8 +240,20 @@ public class MainWindow {
 		btnLoadImage.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				LoadDialog dialog = new LoadDialog(shell, originalImageCanv);
+				LoadDialog dialog = new LoadDialog(shell);
 				dialog.open();
+				String path = dialog.getPath();
+				ImageLoader.loadImageInCanvas(path, originalImageCanv);
+				ImageLoader.loadImageInCanvas(path, preprocessedImageCanv);
+				try {
+					FileUtils.copyFile(new File(path),
+							new File(MainClass.getIntermediateImagePath()));
+					FileUtils.copyFile(new File(path),
+							new File(MainClass.getProcessedImagePath()));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 		FormData fd_btnLoadImage = new FormData();
@@ -287,7 +344,8 @@ public class MainWindow {
 		btnSaveImage.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				SaveDialog dialog = new SaveDialog(shell, preprocessedImageCanv);
+				SaveDialog dialog = new SaveDialog(shell, MainClass
+						.getProcessedImagePath());
 				dialog.open();
 			}
 		});
@@ -299,6 +357,6 @@ public class MainWindow {
 		btnSaveImage.setLayoutData(fd_btnSaveImage);
 		btnSaveImage.setSize(339, 27);
 		btnSaveImage.setText("Save Image");
-
 	}
+
 }
